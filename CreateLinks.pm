@@ -32,10 +32,11 @@ our @EXPORT_OK = qw(
 	safe_symlink panel_link admin_common_link 
 	event_link service_link_enhanced
 	safe_touch templates2events
+        validator_link
 	);
 our %EXPORT_TAGS = (
 	all => [ qw!safe_symlink panel_link admin_common_link
-                    event_link service_link_enhanced
+                    event_link service_link_enhanced validator_link
 		    safe_touch templates2events! ]
         );
 our $VERSION = sprintf '%d.%03d', q$Revision: 1.1 $ =~ /: (\d+).(\d+)/;
@@ -124,6 +125,27 @@ sub event_link($$$)
 
     safe_symlink("../actions/${action}",
         "root/etc/e-smith/events/${event}/S${level}${action}");
+}
+
+
+=head2 validator_link
+
+This function creates a symlink from an action's ordered location in a
+validator directory to its action script.
+
+   ie.
+    my $validator = "user-name";
+    validator_link("uniq-accountname", $validator, "10");
+    validator_link("max-users", $validator, "20");
+
+=cut
+
+sub validator_link($$$)
+{
+    my ($action, $validator, $level) = @_;
+
+    safe_symlink("../actions/${action}",
+        "root/etc/e-smith/validators/${validator}/S${level}${action}");
 }
 
 =head2 service_link_enhanced
