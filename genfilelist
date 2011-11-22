@@ -1,0 +1,245 @@
+#!/usr/bin/perl -w
+
+#----------------------------------------------------------------------
+# copyright (C) 1999-2003 Mitel Networks Corporation
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 		
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 		
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+# 
+# Technical support for this program is available from Mitel Networks 
+# Please visit our web site www.mitel.com/sme/ for details.
+#----------------------------------------------------------------------
+use strict;
+use Errno;
+use File::Find;
+use File::Basename;
+sub process;
+
+sub usage
+{
+    die "t [--ignoredir dir] [--dir dir spec] [--file file spec] root\n";
+}
+
+my @ignoredirs = ('', qw(
+/etc
+/etc/rc.d
+/etc/cron.d
+/etc/cron.daily
+/etc/cron.weekly
+/etc/rc6.d
+/etc/rc.d/init.d
+/etc/logrotate.d
+/usr
+/usr/local
+/usr/local/lib
+/usr/local/bin
+/usr/local/sbin
+/usr/share
+/usr/share/doc
+/usr/share/man
+/usr/share/man/man1
+/usr/share/man/man2
+/usr/share/man/man3
+/usr/share/man/man4
+/usr/share/man/man5
+/usr/share/man/man6
+/usr/share/man/man7
+/usr/share/man/man8
+/usr/share/man/man9
+/usr/share/man/mann
+/bin
+/sbin
+/home
+/root
+/var
+/var/spool
+/var/tmp
+/var/lock
+/var/cache
+/var/named
+/var/qmail
+/usr/lib
+/usr/lib/perl5
+/usr/lib/perl5/site_perl
+/var/log
+));
+
+%::ignoredirs = map { $_ => 1 } @ignoredirs;
+
+%::dirperms = (
+'/home/e-smith/files/primary' => "%attr(0755,root,root)",
+'/home/e-smith/files/primary/cgi-bin' => "%attr(02750,admin,shared)",
+'/home/e-smith/files/primary/files' => "%attr(02750,admin,shared)",
+'/home/e-smith/files/primary/html' => "%attr(02750,admin,shared)",
+'/home/e-smith/files/samba/netlogon' => "%attr(02775,admin,admin)",
+'/home/e-smith/files/samba/printers' => "%attr(02775,admin,admin)",
+'/home/e-smith/files/samba/printers/W32ALPHA' => "%attr(02775,admin,admin)",
+'/home/e-smith/files/samba/printers/W32MIPS' => "%attr(02775,admin,admin)",
+'/home/e-smith/files/samba/printers/W32PPC' => "%attr(02775,admin,admin)",
+'/home/e-smith/files/samba/printers/W32X86' => "%attr(02775,admin,admin)",
+'/home/e-smith/files/samba/printers/WIN40' => "%attr(02775,admin,admin)",
+'/home/e-smith/files/samba/profiles' => "%attr(02750,admin,shared)",
+'/home/e-smith/files/users/admin/home' => "%attr(0700,admin,admin)",
+'/home/e-smith/files/users/admin' => "%attr(0500,admin,admin)",
+'/etc/e-smith/web/panels' => "%attr(0550,root,admin)",
+'/etc/e-smith/web/functions' => "%attr(0550,root,admin)",
+'/etc/e-smith/web/common' => "%attr(0550,www,admin)",
+'/home/e-smith' => "%attr(0755,admin,admin)",
+'/home/e-smith/files' => "%attr(0755,root,root)",
+'/home/e-smith/files/users' => "%attr(0755,root,root)",
+'/home/e-smith/files/users/admin' => "%attr(0755,admin,admin)",
+'/home/e-smith/Maildir' => "%attr(0700,admin,admin)",
+'/home/e-smith/Maildir/tmp' => "%attr(0700,admin,admin)",
+'/home/e-smith/Maildir/new' => "%attr(0700,admin,admin)",
+'/home/e-smith/Maildir/cur' => "%attr(0700,admin,admin)",
+'/home/httpd/html/horde/config' => "%attr(0750,root,www)",
+'/home/netlogon' => "%attr(0755,admin,admin)",
+'/home/dns/var/named' => "%attr(0755,dns,dns)",
+'/home/dns/var/run' => "%attr(0755,dns,dns)",
+'/home/dns/var/run/named' => "%attr(0755,dns,dns)",
+'/root/.ssh' => "%attr(0700,root,root)",
+'/var/local/fetchmail' => "%attr(0755,qmailr,qmail)",
+'/var/log/faxrunqd' => "%attr(01755,qmaill,nofiles)",
+'/etc/rc.d/init.d/supervise' => "%attr(0755,root,root)",
+);
+
+%::fileperms = (
+'/etc/rc.d/init.d/' => "%attr(0755,root,root)",
+'/etc/rc.d/init.d/supervise/' => "%attr(0755,root,root)",
+'/etc/profile.d/' => "%attr(0755,root,root)",
+'/etc/cron.d/' => "%attr(0644,root,root)",
+'/etc/cron.daily/' => "%attr(0744,root,root)",
+'/etc/cron.weekly/' => "%attr(0744,root,root)",
+'/etc/diald/scripts/' => "%attr(0744,root,root)",
+'/etc/e-smith/web/functions/' => "%attr(04750,root,admin)",
+'/etc/e-smith/web/panels/password/cgi-bin/' => "%attr(06550,root,admin)",
+'/etc/e-smith/web/panels/' => "%attr(06550,root,admin)",
+'/home/e-smith/files/manager/html/index.cgi' => "%attr(0755,root,root)",
+'/sbin/e-smith/console' => "%attr(06554,root,root)",
+'/sbin/e-smith/dynamic-dns/' => "%attr(0554,root,root)",
+'/sbin/e-smith/quicktest'    => "%attr(0555,root,root)",
+'/sbin/e-smith/smoketest'    => "%attr(0555,root,root)",
+'/sbin/e-smith/' => "%attr(0554,root,root)",
+'/home/httpd/html/horde/config/' => "%attr(0664,root,www)",
+'/home/httpd/horde-phplib/local.inc' => "%attr(0640,root,www)",
+'/home/netlogon/netlogon.bat' => "%config(noreplace) %attr(0644,admin,admin)",
+'/home/e-smith/files/samba/netlogon/netlogon.bat' =>
+		    "%config(noreplace) %attr(0644,admin,admin)",
+'/etc/e-smith/events/actions/create-machine-account' => "%attr(06554,root,root)",
+'/etc/e-smith/events/actions/' => "%attr(0554,root,root)",
+'/var/spool/fax/faxrunqd/run' => "%attr(0755,root,root)",
+'/var/spool/fax/faxrunqd/log/run' => "%attr(0755,root,root)",
+'/usr/lib/perl5/site_perl/esmith/FormMagick/Panel/' => "%attr(0644,root,root)",
+'/sbin/e-smith/console-screens/' => "%attr(0750,root,root)",
+);
+
+my $startdirectory = undef;
+while (my $arg = shift)
+{
+    if ($arg eq "--ignoredir")
+    {
+        my $arg = shift;
+        usage() unless (defined $arg);
+        $::ignoredirs{$arg} = 1;
+    }
+    elsif ($arg eq "--dir")
+    {
+        my $dir = shift;
+        my $spec = shift;
+        usage() unless (defined $dir && defined $spec);
+	die "Can't override permissions already specified\n"
+	    if exists $::dirperms{$dir};
+        $::dirperms{$dir} = '%' . $spec;
+    }
+    elsif ($arg eq "--file")
+    {
+        my $file = shift;
+        my $spec = shift;
+        usage() unless (defined $file && defined $spec);
+	die "Can't override permissions already specified\n"
+	    if exists $::fileperms{$file};
+        $::fileperms{$file} = '%' . $spec;
+    }
+    else
+    {
+	$startdirectory = $arg;
+    }
+}
+
+defined $startdirectory
+    or die "Must give directory arg";
+
+# Change to the build root directory
+chdir $startdirectory
+    or die "Could not chdir to $startdirectory: $!\n";
+
+# Now go and process all the files...
+find(\&::process, '.');
+
+exit (0);
+
+sub process
+{
+    my $path = $File::Find::name;
+
+    # Remove leading .
+    $path =~ s/^.//;
+
+    if (-d)
+    {
+	return if (defined $::ignoredirs{$path});
+
+	# Directories get marked as such
+	print "%dir ";
+
+	#  .. and some of them get special permissions and ownership
+	print defined $::dirperms{$path} ?
+		"$::dirperms{$path} " :
+	# and others just get the default
+		"%attr(0755,root,root) ";
+	print "$path\n";
+    }
+    elsif (-f)
+    {
+	# Ignore .orig files created in prep section
+	return if $path =~ m{\.orig$};
+
+        my (@paths) = ($path);
+
+        # Add compiled python files
+        push @paths, "${path}c" if $path =~ m{\.py$};
+        push @paths, "${path}o" if $path =~ m{\.py$};
+
+        foreach $path (@paths) {
+            # Some files get special permissions and ownership
+            my $dir = (dirname $path) . '/';
+
+            # Special permissions per file
+            if (defined $::fileperms{$path})
+            {
+                print "$::fileperms{$path} ";
+            }
+            # Special permissions or per containing directory
+            elsif (defined $::fileperms{$dir})
+            {
+                print "$::fileperms{$dir} ";
+            }
+            print "$path\n";
+        }
+    }
+    else
+    {
+	print "$path\n";
+    }
+}

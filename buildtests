@@ -1,0 +1,81 @@
+#!/usr/bin/perl -w
+
+use strict;
+use File::Find;
+use File::Path;
+use File::Basename;
+
+=head1 NAME
+
+buildtests -- generate test scripts from inline tests in Perl scripts
+
+=head1 SYNOPSIS
+
+    buildtests output-test-dir
+
+=head1 DESCRIPTION
+
+This script goes through the files to be installed by an e-smith RPM,
+seeking out Perl scripts which contain embedded tests (using
+Test::Inline).  If it finds them, it generates tests under
+F</etc/e-smith/tests/output-test-dir>
+
+The filenames of the output test files are usually in the form
+F<embedded-origname.t> -- the leading directories will be stripped off,
+and the suffix will be stripped off if it's either of F<.pm> or F<.pl>.
+However, there's a possibility that this will result in a name clash, so
+if a name clash looks likely to occur, the script will keep prefixing
+leading directories to the output filename until it finds something
+that's not taken.  So if you already had, for example, a test script
+called F<embedded-config.t> and you wanted to generate a test from
+esmith::config, it would end up being called
+F<embedded-esmith-config.t>.  In short: the filenames given to the
+output files may vary from time to time, but the files will not overwrite 
+existing files.
+
+=cut
+
+my $outputdir = $ARGV[0] || usage();
+
+print "Building test suite from embedded tests...\n";
+
+die "You must start buildtests in the directory which contains the root/ tree\n"
+    unless -d "root";
+
+$outputdir = "root/etc/e-smith/tests/$outputdir";
+unless (-d $outputdir) {
+    print "  creating directory $outputdir...\n";
+    mkpath $outputdir or die "Can't make output directory $outputdir: $!";
+}
+
+find({ wanted => \&buildtests, no_chdir => 1 }, "root/");
+
+sub buildtests {
+    return unless -T;
+    return if /CVS/;
+    return if /\.t$/;
+    return if /\.orig$/;
+    my $origfile = $_;
+    my ($testname, $dir) = fileparse($origfile, ".pm", ".pl");
+    my @dirs = split "/", $dir;
+
+    while (-f "$outputdir/embedded-$testname.t") {
+        $testname = pop(@dirs) . "-$testname";
+    }
+
+    my $testfile = "$outputdir/embedded-$testname.t";
+
+    #print "ORIG: $origfile\nTEST: $testfile\n";
+    system("pod2test", $origfile, $testfile);
+}
+
+
+sub usage {
+    die qq(
+Usage:
+    buildtests output-test-dir
+
+You must provide an output directory name, which will be created under
+/etc/e-smith/tests.  
+);
+}
