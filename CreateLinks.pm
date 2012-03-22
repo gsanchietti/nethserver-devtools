@@ -1,5 +1,6 @@
 #----------------------------------------------------------------------
 # copyright (C) 1999-2005 Mitel Networks Corporation
+# Copyright (C) 2012 Nethesis srl
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,14 +33,14 @@ our @EXPORT_OK = qw(
 	safe_symlink panel_link admin_common_link 
 	event_link service_link_enhanced
 	safe_touch templates2events
-        validator_link
+        validator_link event_templates event_actions
 	);
 our %EXPORT_TAGS = (
 	all => [ qw!safe_symlink panel_link admin_common_link
                     event_link service_link_enhanced validator_link
-		    safe_touch templates2events! ]
+		    safe_touch templates2events event_templates event_actions! ]
         );
-our $VERSION = sprintf '%d.%03d', q$Revision: 1.1 $ =~ /: (\d+).(\d+)/;
+our $VERSION = '2.300';
 
 =head1 NAME
 
@@ -196,6 +197,7 @@ sub safe_touch
 }
 
 =head2 templates2events
+
 This function creates a file tree (of empty files) which is used by the
 generic_template_expand action to determine which templates need to
 be expanded for a particular event. Takes one file argument and a
@@ -214,9 +216,53 @@ sub templates2events
     }
 }
 
+=head2 event_templates($event, @paths)
+
+This function is similar to templates2events(): determines the list of templates to be expanded for the given an event name. E.g.
+
+ event_templates("event1", "/etc/some/file1", "/etc/some/file2, ...);
+
+=cut
+sub event_templates
+{
+    my ($event, @paths) = @_;
+
+    foreach (@paths) 
+    {
+	safe_touch "root/etc/e-smith/events/$event/templates2expand/$_";
+    }
+}
+
+=head2 event_actions($event, @action_specs)
+
+Create links to actions for the given event. @actions_specs is a list of pairs Action => Priority. E.g
+
+  event_actions('myevent', 'act1' => '10', 'act2' => '20', ..);
+
+See also event_link().
+
+=cut
+sub event_actions
+{
+    my ($event, @action_specs) = @_;
+
+    while(scalar @action_specs > 0) {
+	my $action = shift @action_specs;
+	my $priority = shift @action_specs;
+	event_link($action, $event, $priority);
+    }
+
+}
+
 =head1 AUTHOR
 
-SME Server Developers <bugs@e-smith.com>
+=over 4
+
+=item - SME Server Developers <bugs@e-smith.com>
+
+=item - Nethesis srl www.nethesis.it <bugs@nethesis.it>
+
+=back
 
 =cut
 
