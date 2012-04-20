@@ -34,13 +34,15 @@ our @EXPORT_OK = qw(
 	event_link service_link_enhanced
 	safe_touch templates2events
         validator_link event_templates event_actions
+        validator_actions event_services
 	);
 our %EXPORT_TAGS = (
 	all => [ qw!safe_symlink panel_link admin_common_link
                     event_link service_link_enhanced validator_link
-		    safe_touch templates2events event_templates event_actions! ]
+		    safe_touch templates2events event_templates event_actions
+                    validator_actions event_services! ]
         );
-our $VERSION = '2.300';
+our $VERSION = '6.103';
 
 =head1 NAME
 
@@ -149,6 +151,29 @@ sub validator_link($$$)
         "root/etc/e-smith/validators/${validator}/S${level}${action}");
 }
 
+
+=head2 validator_actions($validatorName, @action_specs)
+
+Create links to actions for the given validator. @actions_specs is a
+list of pairs Action => Priority. E.g
+
+  validator_actions('validator-name', 'act1' => '10', 'act2' => '20', ..);
+
+See also validator_link().
+
+=cut 
+
+sub validator_actions
+{
+    my ($validator, @action_specs) = @_;
+
+    while(scalar @action_specs > 0) {
+	my $action = shift @action_specs;
+	my $priority = shift @action_specs;
+	validator_link($action, $validator, $priority);
+    }
+}
+
 =head2 service_link_enhanced
 
 This function creates a symlink from a SysV init start or kill link in a
@@ -252,6 +277,29 @@ sub event_actions
 	event_link($action, $event, $priority);
     }
 
+}
+
+
+=head2 event_services($event, @service_specs) 
+
+Create links for the given $event in services2adjust/
+subdirectory. @service_specs is a list of pairs Service =>
+LinkDestination
+
+  event_services('myevent', 'sshd' => 'restart', 'samba' => 'reload')
+
+See also safe_symlink().
+
+=cut
+sub event_services
+{
+    my ($event, @action_specs) = @_;
+
+    while(scalar @action_specs > 0) {
+	my $service = shift @action_specs;
+	my $action = shift @action_specs;
+	safe_symlink($action, 'root/etc/e-smith/events/' . $event . '/services2adjust/' . $service);
+    }    
 }
 
 =head1 AUTHOR
