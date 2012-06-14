@@ -62,7 +62,6 @@ my @ignoredirs = ('', qw(
 /sbin
 /home
 /root
-/var
 /var/spool
 /var/tmp
 /var/lock
