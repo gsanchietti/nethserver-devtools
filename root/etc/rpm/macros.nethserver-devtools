@@ -1,0 +1,7 @@
+# nethserver-devtools macros
+
+%genfilelist /sbin/e-smith/genfilelist
+
+
+
+
