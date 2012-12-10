@@ -1,0 +1,57 @@
+Summary: NethServer tools for building RPMs
+Name: nethserver-devtools
+Version: @@VERSION@@
+Release: @@RELEASE@@%{?dist}
+License: GPL
+Source: %{name}-%{version}.tar.gz
+BuildArch: noarch
+Requires: perl, perl(Test::Inline) >= 0.12, perl(XML::Parser)
+
+%changelog
+* Fri Mar 23 2012 Davide Principi <davide.principi@nethesis.it> - 2.3.4-1.nh.git169da87
+- samba profile dir is no longer owned by shared group by default
+
+* Thu Mar 22 2012 Davide Principi <davide.principi@nethesis.it> - 2.3.3-1.nh.git65a786d6
+- CreateLinks: added event_actions() and event_templates() wrappers
+
+* Tue Mar 20 2012 Davide Principi <davide.principi@nethesis.it> - 2.3.2-1.nh
+- Added event_actions and event_templates functions
+
+* Tue Nov 22 2011 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 2.3.0-1.nh
+- First release based e-smith-devtools-2.2.0-4.sme 
+- Add validator_link function
+- Using site %perl_vendorlib macro to place perl modules
+
+%description
+Use "genfilelist" to create a filelist file with correct ownerships and
+permissions.
+
+%prep
+%setup
+
+%build
+
+%install
+rm -rf $RPM_BUILD_ROOT
+mkdir -p ${RPM_BUILD_ROOT}/sbin/e-smith
+mkdir -p ${RPM_BUILD_ROOT}%{perl_vendorlib}/esmith/Build
+
+cp -a root/etc ${RPM_BUILD_ROOT}/
+cp -a root/sbin ${RPM_BUILD_ROOT}/
+cp -a esmith ${RPM_BUILD_ROOT}%{perl_vendorlib}/
+
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%files
+%defattr(-,root,root)
+%attr(0755,root,root) /sbin/e-smith/genfilelist
+%attr(0755,root,root) /sbin/e-smith/buildtests
+%attr(0755,root,root) /sbin/e-smith/validate-lexicon
+%attr(0755,root,root) /sbin/e-smith/generate-lexicons
+%attr(0755,root,root) /sbin/e-smith/update-po
+%attr(-,root,root) %dir /sbin/e-smith
+%attr(0644,root,root) %{perl_vendorlib}/esmith/Build/CreateLinks.pm
+%attr(0644,root,root) /etc/rpm/macros.nethserver-devtools
+%doc COPYING
