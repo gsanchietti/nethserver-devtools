@@ -43,4 +43,8 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Mar 19 2013 Davide Principi <davide.principi@nethesis.it> - 1.0.1-1.ns6
+- *.spec.in: fixed Release tag
+
+
 
