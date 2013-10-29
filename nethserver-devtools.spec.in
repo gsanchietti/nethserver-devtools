@@ -46,6 +46,9 @@ cp -v ./composer.phar ${RPM_BUILD_ROOT}/usr/bin/composer
 
 
 %changelog
+* Tue Oct 29 2013 Davide Principi <davide.principi@nethesis.it> - 1.1.0-1.ns6
+- Implement Composer PSR-0 autoloader - Feature #2293 [Nethgui]
+
 * Tue Mar 19 2013 Davide Principi <davide.principi@nethesis.it> - 1.0.1-1.ns6
 - *.spec.in: fixed Release tag
 
