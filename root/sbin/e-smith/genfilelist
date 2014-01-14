@@ -37,11 +37,16 @@ my @ignoredirs = (qw(
 %::ignoredirs = map { $_ => 1 } @ignoredirs;
 
 %::dirperms = (
-
 );
 
 %::fileperms = (
-
+'/etc/rc.d/init.d/' => "%attr(0755,root,root)",
+'/etc/profile.d/' => "%attr(0755,root,root)",
+'/etc/cron.d/' => "%attr(0644,root,root)",
+'/etc/cron.daily/' => "%attr(0744,root,root)",
+'/etc/cron.weekly/' => "%attr(0744,root,root)",
+'/sbin/e-smith/' => "%attr(0554,root,root)",
+'/etc/e-smith/events/actions/' => "%attr(0554,root,root)",
 );
 
 my $startdirectory = undef;
