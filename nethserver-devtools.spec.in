@@ -6,6 +6,7 @@ License: GPL
 Source: %{name}-%{version}.tar.gz
 BuildArch: noarch
 Requires: perl, perl(Test::Inline) >= 0.12, perl(XML::Parser), php-cli
+Requires: python-docutils
 BuildRequires: curl, php-cli
 
 %description
@@ -24,11 +25,12 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p ${RPM_BUILD_ROOT}/sbin/e-smith
 mkdir -p ${RPM_BUILD_ROOT}/usr/bin
 mkdir -p ${RPM_BUILD_ROOT}%{perl_vendorlib}/esmith/Build
+mkdir -p ${RPM_BUILD_ROOT}/usr/share/nethserver-devtools
 
 cp -a root/etc ${RPM_BUILD_ROOT}/
 cp -a root/sbin ${RPM_BUILD_ROOT}/
 cp -a esmith ${RPM_BUILD_ROOT}%{perl_vendorlib}/
-
+cp -av root/usr/share/nethserver-devtools/ ${RPM_BUILD_ROOT}/usr/share/
 cp -v ./composer.phar ${RPM_BUILD_ROOT}/usr/bin/composer
 
 %files
@@ -42,6 +44,8 @@ cp -v ./composer.phar ${RPM_BUILD_ROOT}/usr/bin/composer
 %attr(-,root,root) %dir /sbin/e-smith
 %attr(0644,root,root) %{perl_vendorlib}/esmith/Build/CreateLinks.pm
 %attr(0644,root,root) /etc/rpm/macros.nethserver-devtools
+%attr(-,root,root) %dir /usr/share/nethserver-devtools
+%attr(0644,root,root) /usr/share/nethserver-devtools/docs.mk
 %doc COPYING
 
 
