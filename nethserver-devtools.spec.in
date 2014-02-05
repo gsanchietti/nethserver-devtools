@@ -50,6 +50,9 @@ cp -v ./composer.phar ${RPM_BUILD_ROOT}/usr/bin/composer
 
 
 %changelog
+* Wed Feb 05 2014 Davide Principi <davide.principi@nethesis.it> - 1.1.1-1.ns6
+- RST format for help files - Enhancement #2627 [NethServer]
+
 * Tue Oct 29 2013 Davide Principi <davide.principi@nethesis.it> - 1.1.0-1.ns6
 - Implement Composer PSR-0 autoloader - Feature #2293 [Nethgui]
 
