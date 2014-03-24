@@ -46,6 +46,7 @@ cp -v ./composer.phar ${RPM_BUILD_ROOT}/usr/bin/composer
 %attr(0644,root,root) /etc/rpm/macros.nethserver-devtools
 %attr(-,root,root) %dir /usr/share/nethserver-devtools
 %attr(0644,root,root) /usr/share/nethserver-devtools/docs.mk
+%attr(0644,root,root) /usr/share/nethserver-devtools/roles.rst
 %doc COPYING
 
 

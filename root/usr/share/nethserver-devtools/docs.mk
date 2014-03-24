@@ -2,18 +2,22 @@
 # Build UI online documentation
 #
 
+vpath %.rst /usr/share/nethserver-devtools
+
 RSTFILES        := $(shell find . -name '*.rst')
 HTMLFILES       := $(addsuffix .html, $(basename ${RSTFILES}))
 RST2HTML        := rst2html --link-stylesheet --stylesheet-path= --stylesheet= \
                             --no-doc-title --no-doc-info
 
+RST_INCLUDES	:= roles.rst
+
 .PHONY: all clean
 
 all: ${HTMLFILES}
 
-%.html: %.rst
-	args=`head -1 $< | sed -r -n '/^\.\. +/ {s/^\.\. +//; p}'` ; \
-	${RST2HTML} $${args} $< > $@ ; \
+%.html: $(RST_INCLUDES) %.rst
+	args=`head -1 $(lastword $^) | sed -r -n '/^\.\. +/ {s/^\.\. +//; p}'` ; \
+	cat $^ | ${RST2HTML} $${args} /dev/stdin  >$@
 
 clean:
 	rm -f ${HTMLFILES}
