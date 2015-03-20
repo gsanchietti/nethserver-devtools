@@ -40,11 +40,6 @@ my @ignoredirs = (qw(
 );
 
 %::fileperms = (
-'/etc/rc.d/init.d/' => "%attr(0755,root,root)",
-'/etc/profile.d/' => "%attr(0755,root,root)",
-'/etc/cron.d/' => "%attr(0644,root,root)",
-'/etc/cron.daily/' => "%attr(0744,root,root)",
-'/etc/cron.weekly/' => "%attr(0744,root,root)",
 '/sbin/e-smith/' => "%attr(0554,root,root)",
 '/etc/e-smith/events/actions/' => "%attr(0554,root,root)",
 );
@@ -103,17 +98,19 @@ sub process
 
     if (-d)
     {
-	return if (defined $::ignoredirs{$path});
+        if(defined $::ignoredirs{$path}) {
+            print "# ignore dir $path\n";
 
-	# Directories get marked as such
-	print "%dir ";
+        } elsif(defined $::dirperms{$path}) {
+            print "%dir $::dirperms{$path} $path\n";
 
-	#  .. and some of them get special permissions and ownership
-	print defined $::dirperms{$path} ?
-		"$::dirperms{$path} " :
-	# and others just get the default
-		"%attr(0755,root,root) ";
-	print "$path\n";
+        } elsif( ! scalar map {$_} <$startdirectory/$path/*>) {
+            print "%dir %attr(0755,root,root) $path\n";
+
+        } else {
+            print "# skipped dir $path\n";
+        }
+
     }
     elsif (-f)
     {
