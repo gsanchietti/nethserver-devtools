@@ -1,7 +1,7 @@
 Summary: NethServer tools for building RPMs
 Name: nethserver-devtools
-Version: @@VERSION@@
-Release: @@RELEASE@@
+Version: 1.1.2
+Release: 1%{?dist}
 License: GPL
 Source: %{name}-%{version}.tar.gz
 BuildArch: noarch
