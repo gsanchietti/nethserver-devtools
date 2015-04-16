@@ -5,9 +5,8 @@ Release: 1%{?dist}
 License: GPL
 Source: %{name}-%{version}.tar.gz
 BuildArch: noarch
-Requires: perl, perl(Test::Inline) >= 0.12, perl(XML::Parser), php-cli
+Requires: perl, perl(Test::Inline) >= 0.12, perl(XML::Parser)
 Requires: python-docutils
-BuildRequires: curl, php-cli
 
 %description
 Use "genfilelist" to create a filelist file with correct ownerships and
@@ -17,8 +16,6 @@ permissions.
 %setup
 
 %build
-curl -sS https://getcomposer.org/installer | php
-chmod +x composer.phar
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -31,11 +28,9 @@ cp -a root/etc ${RPM_BUILD_ROOT}/
 cp -a root/sbin ${RPM_BUILD_ROOT}/
 cp -a esmith ${RPM_BUILD_ROOT}%{perl_vendorlib}/
 cp -av root/usr/share/nethserver-devtools/ ${RPM_BUILD_ROOT}/usr/share/
-cp -v ./composer.phar ${RPM_BUILD_ROOT}/usr/bin/composer
 
 %files
 %defattr(-,root,root)
-%attr(0755,root,root) /usr/bin/composer
 %attr(0755,root,root) /sbin/e-smith/genfilelist
 %attr(0755,root,root) /sbin/e-smith/buildtests
 %attr(0755,root,root) /sbin/e-smith/validate-lexicon
