@@ -5,7 +5,7 @@ Release: 1%{?dist}
 License: GPL
 Source: %{name}-%{version}.tar.gz
 BuildArch: noarch
-Requires: perl, perl(Test::Inline) >= 0.12, perl(XML::Parser)
+Requires: perl
 Requires: python-docutils
 
 %description
@@ -18,31 +18,27 @@ permissions.
 %build
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p ${RPM_BUILD_ROOT}/sbin/e-smith
-mkdir -p ${RPM_BUILD_ROOT}/usr/bin
-mkdir -p ${RPM_BUILD_ROOT}%{perl_vendorlib}/esmith/Build
-mkdir -p ${RPM_BUILD_ROOT}/usr/share/nethserver-devtools
+rm -rf %{buildroot}
+%{__install} -d \
+    %{buildroot}/%{_bindir} \
+    %{buildroot}/%{_datadir}/nethserver-devtools \
+    %{buildroot}/%{_sysconfdir}/rpm/
 
-cp -a root/etc ${RPM_BUILD_ROOT}/
-cp -a root/sbin ${RPM_BUILD_ROOT}/
-cp -a esmith ${RPM_BUILD_ROOT}%{perl_vendorlib}/
-cp -av root/usr/share/nethserver-devtools/ ${RPM_BUILD_ROOT}/usr/share/
+%{__install} -vp src/bin/* %{buildroot}/%{_bindir}/
+%{__install} -vp src/share/* %{buildroot}/%{_datadir}/nethserver-devtools/
+%{__install} -vp src/rpm/* %{buildroot}/%{_sysconfdir}/rpm/
+%{__install} -vpD src/perl/esmith/Build/CreateLinks.pm %{buildroot}/%{perl_vendorlib}/esmith/Build/CreateLinks.pm
 
 %files
 %defattr(-,root,root)
-%attr(0755,root,root) /sbin/e-smith/genfilelist
-%attr(0755,root,root) /sbin/e-smith/buildtests
-%attr(0755,root,root) /sbin/e-smith/validate-lexicon
-%attr(0755,root,root) /sbin/e-smith/generate-lexicons
-%attr(0755,root,root) /sbin/e-smith/update-po
-%attr(-,root,root) %dir /sbin/e-smith
-%attr(0644,root,root) %{perl_vendorlib}/esmith/Build/CreateLinks.pm
-%attr(0644,root,root) /etc/rpm/macros.nethserver-devtools
-%attr(-,root,root) %dir /usr/share/nethserver-devtools
-%attr(0644,root,root) /usr/share/nethserver-devtools/docs.mk
-%attr(0644,root,root) /usr/share/nethserver-devtools/roles.rst
 %doc COPYING
+%{_bindir}/genfilelist
+%{perl_vendorlib}/esmith/Build/CreateLinks.pm
+%{_sysconfdir}/rpm/macros.nethserver-devtools
+%{_datadir}/nethserver-devtools/docs.mk
+%{_datadir}/nethserver-devtools/roles.rst
+%dir %{_datadir}/nethserver-devtools
+
 
 
 %changelog
