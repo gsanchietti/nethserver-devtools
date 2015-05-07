@@ -7,6 +7,7 @@
 %_nseventsdir       %{_nsconfdir}/events
 %_nstemplatesdir    %{_nsconfdir}/templates
 %_nsdbconfdir       %{_nsconfdir}/db
+%_nsuidir           %{_datadir}/nethesis
 %_nsstatedir        %{_sharedstatedir}/nethserver
 %_nsdbdir           %{_nsstatedir}/db
 
