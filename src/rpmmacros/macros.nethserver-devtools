@@ -1,8 +1,16 @@
 # nethserver-devtools macros
 
-%genfilelist /sbin/e-smith/genfilelist
+%__genfilelist %{_bindir}/genfilelist
+%genfilelist %{__genfilelist}
+%makedocs    %{__make} -f %{_datadir}/nethserver-devtools/docs.mk %{?**:%{**}}
+%_nsconfdir         /etc/e-smith
+%_nseventsdir       %{_nsconfdir}/events
+%_nstemplatesdir    %{_nsconfdir}/templates
+%_nsdbconfdir       %{_nsconfdir}/db
+%_nsstatedir        %{_sharedstatedir}/nethserver
+%_nsdbdir           %{_nsstatedir}/db
 
-%makedocs make -f /usr/share/nethserver-devtools/docs.mk %{?**:%{**}}
+
 
 
 

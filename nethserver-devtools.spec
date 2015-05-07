@@ -26,7 +26,7 @@ rm -rf %{buildroot}
 
 %{__install} -vp src/bin/* %{buildroot}/%{_bindir}/
 %{__install} -vp src/share/* %{buildroot}/%{_datadir}/nethserver-devtools/
-%{__install} -vp src/rpm/* %{buildroot}/%{_sysconfdir}/rpm/
+%{__install} -vp src/rpmmacros/* %{buildroot}/%{_sysconfdir}/rpm/
 %{__install} -vpD src/perl/esmith/Build/CreateLinks.pm %{buildroot}/%{perl_vendorlib}/esmith/Build/CreateLinks.pm
 
 %files
