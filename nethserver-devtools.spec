@@ -1,6 +1,6 @@
 Summary: NethServer tools for building RPMs
 Name: nethserver-devtools
-Version: 1.1.3
+Version: 1.1.4
 Release: 1%{?dist}
 License: GPL
 Source: %{name}-%{version}.tar.gz
@@ -46,6 +46,9 @@ cp -av root/usr/share/nethserver-devtools/ ${RPM_BUILD_ROOT}/usr/share/
 
 
 %changelog
+* Tue May 19 2015 Davide Principi <davide.principi@nethesis.it> - 1.1.4-1
+- Fix case where macro argument list is empty. Refs #2654 [NethServer]
+
 * Tue May 19 2015 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.1.3-1
 - Select rst2html output language - Enhancement #2654 [NethServer]
 
