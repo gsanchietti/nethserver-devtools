@@ -2,7 +2,7 @@
 
 %genfilelist /sbin/e-smith/genfilelist
 
-%makedocs make -f /usr/share/nethserver-devtools/docs.mk %{**}
+%makedocs make -f /usr/share/nethserver-devtools/docs.mk %{?**:%{**}}
 
 
 
