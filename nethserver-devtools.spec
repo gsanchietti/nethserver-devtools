@@ -1,6 +1,6 @@
 Summary: NethServer tools for building RPMs
 Name: nethserver-devtools
-Version: 1.1.2
+Version: 1.1.3
 Release: 1%{?dist}
 License: GPL
 Source: %{name}-%{version}.tar.gz
@@ -46,6 +46,9 @@ cp -av root/usr/share/nethserver-devtools/ ${RPM_BUILD_ROOT}/usr/share/
 
 
 %changelog
+* Tue May 19 2015 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.1.3-1
+- Select rst2html output language - Enhancement #2654 [NethServer]
+
 * Mon Mar 24 2014 Davide Principi <davide.principi@nethesis.it> - 1.1.2-1.ns6
 - Support Sphinx RST text roles - Enhancement #2700 [NethServer]
 
