@@ -298,7 +298,11 @@ sub event_services
     while(scalar @action_specs > 0) {
 	my $service = shift @action_specs;
 	my $action = shift @action_specs;
-	safe_symlink($action, 'root/etc/e-smith/events/' . $event . '/services2adjust/' . $service);
+        my $dir = 'root/etc/e-smith/events/' . $event . '/services2adjust/';
+        File::Path::make_path($dir);
+        open(my $fh, '>', $dir . $service);
+        print $fh "$action\n";
+        close $fh;
     }    
 }
 
