@@ -106,6 +106,9 @@ sub process
 
         } elsif( ! scalar map {$_} <$startdirectory/$path/*>) {
             print "%dir %attr(0755,root,root) $path\n";
+        } elsif($path =~ m:^/etc/e-smith/db/.+/defaults/: && -f "$startdirectory/$path/type") {
+            # Take ownership of DB defaults directory
+            print "%dir %attr(0755,root,root) $path\n";
 
         } else {
             print "# skipped dir $path\n";
