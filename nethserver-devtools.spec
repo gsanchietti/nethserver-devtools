@@ -1,6 +1,6 @@
 Summary: NethServer tools for building RPMs
 Name: nethserver-devtools
-Version: 1.1.4
+Version: 1.2.0
 Release: 1%{?dist}
 License: GPL
 Source: %{name}-%{version}.tar.gz
@@ -42,6 +42,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu Jul 07 2016 Stefano Fancello <stefano.fancello@nethesis.it> - 1.2.0-1
+- First NS7 release
+
 * Tue May 19 2015 Davide Principi <davide.principi@nethesis.it> - 1.1.4-1
 - Fix case where macro argument list is empty. Refs #2654 [NethServer]
 
