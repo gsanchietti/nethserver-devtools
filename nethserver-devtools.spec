@@ -7,6 +7,7 @@ Source: %{name}-%{version}.tar.gz
 BuildArch: noarch
 Requires: perl
 Requires: python-docutils
+Requires: make
 
 %description
 Use "genfilelist" to create a filelist file with correct ownerships and
@@ -62,6 +63,3 @@ rm -rf %{buildroot}
 
 * Tue Mar 19 2013 Davide Principi <davide.principi@nethesis.it> - 1.0.1-1.ns6
 - *.spec.in: fixed Release tag
-
-
-
