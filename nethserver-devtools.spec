@@ -1,13 +1,14 @@
 Summary: NethServer tools for building RPMs
 Name: nethserver-devtools
-Version: 1.2.1
+Version: 1.2.2
 Release: 1%{?dist}
 License: GPL
 Source: %{name}-%{version}.tar.gz
 BuildArch: noarch
 Requires: perl
-Requires: python-docutils
+Requires: python3-docutils
 Requires: make
+BuildRequires:  perl-generators
 
 %description
 Use "genfilelist" to create a filelist file with correct ownerships and
@@ -43,6 +44,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Tue Jan 28 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.2.2-1
+- Rebuild for EL8
+
 * Fri Nov 10 2017 Davide Principi <davide.principi@nethesis.it> - 1.2.1-1
 - Fix missing make dependency
 
